@@ -2,60 +2,75 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <title>交易倉位計算器</title>
+    <title>停損計算器</title>
     <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        .container {
+            width: 50%;
+            margin: auto;
         }
-        .input-form {
-            margin-bottom: 20px;
+        input[type=number], button {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            box-sizing: border-box;
         }
-        .input-group {
-            margin-bottom: 10px;
-        }
-        .input-group label {
-            display: inline-block;
-            width: 200px;
-        }
-        .input-group input {
-            width: 200px;
-        }
-        .output {
-            margin-bottom: 20px;
+        .hidden {
+            display: none;
         }
     </style>
 </head>
 <body>
-    <div class="input-form">
-        <h1>输入界面</h1>
-        <form method="post" action="/">
-            <div class="input-group">
-                <label for="total_capital">总资金:</label>
-                <input type="text" id="total_capital" name="total_capital" required>
+    <div class="container">
+        <h2>停損計算器</h2>
+        <form method="post">
+            <label for="total_capital">總資金:</label>
+            <input type="number" id="total_capital" name="total_capital" value="{{ total_capital }}">
+
+            <label for="stop_loss_percentage">每筆交易停損比例 (%):</label>
+            <input type="number" id="stop_loss_percentage" name="stop_loss_percentage" value="{{ stop_loss_percentage }}" step="0.01">
+
+            <button type="submit">計算</button>
+            
+            {% if stop_loss_amount > 0 %}
+                <p>每筆交易停損金額: {{ stop_loss_amount }}</p>
+                <button type="submit" name="show_long">做多</button>
+                <button type="submit" name="show_short">做空</button>
+            {% endif %}
+            
+            <!-- 做多操作 -->
+            <div id="long_operation" class="{{ 'hidden' if not show_long_operation }}">
+                <label for="long_entry_price">做多進場價格:</label>
+                <input type="number" id="long_entry_price" name="long_entry_price" value="{{ long_entry_price }}">
+
+                <label for="long_stop_loss_price">做多停損價格:</label>
+                <input type="number" id="long_stop_loss_price" name="long_stop_loss_price" value="{{ long_stop_loss_price }}">
+
+                <button type="submit" name="long_calculate">計算做多</button>
             </div>
-            <div class="input-group">
-                <label for="stop_loss_percentage">每笔交易止损百分比:</label>
-                <input type="text" id="stop_loss_percentage" name="stop_loss_percentage" required><span>%</span>
+            
+            {% if long_results_shown %}
+                <p>做多停損點數: {{ long_entry_price - long_stop_loss_price }}</p>
+                <p>做多倉位 (U): {{ long_position_size }}</p>
+            {% endif %}
+            
+            <!-- 做空操作 -->
+            <div id="short_operation" class="{{ 'hidden' if not show_short_operation }}">
+                <label for="short_entry_price">做空進場價格:</label>
+                <input type="number" id="short_entry_price" name="short_entry_price" value="{{ short_entry_price }}">
+
+                <label for="short_stop_loss_price">做空停損價格:</label>
+                <input type="number" id="short_stop_loss_price" name="short_stop_loss_price" value="{{ short_stop_loss_price }}">
+
+                <button type="submit" name="short_calculate">計算做空</button>
             </div>
-            <div class="input-group">
-                <input type="submit" name="calculate" value="计算止损金额">
-            </div>
-            <div class="input-group">
-                <input type="submit" name="long" value="开多">
-                <input type="submit" name="short" value="开空">
-            </div>
+            
+            {% if short_results_shown %}
+                <p>做空停損點數: {{ short_stop_loss_price - short_entry_price }}</p>
+                <p>做空倉位 (U): {{ short_position_size }}</p>
+            {% endif %}
         </form>
-    </div>
-    <div class="output">
-        <h1>计算结果</h1>
         {% if error %}
             <p style="color: red;">{{ error }}</p>
-        {% else %}
-            {% if stop_loss_amount %}
-                <p>每笔交易止损金额: {{ stop_loss_amount | round(2) }}</p>
-            {% endif %}
         {% endif %}
     </div>
 </body>
