@@ -26,3 +26,4 @@ python-lsp-jsonrpc==1.0.0
 pytweening==1.0.7
 queuelib==1.5.0
 webencodings==0.5.1
+Flask
