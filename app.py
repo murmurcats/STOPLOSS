@@ -1,74 +1,72 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    # 初始化变量以防止未定义错误
+    total_capital = stop_loss_percentage = stop_loss_amount = 0
+    long_entry_price = long_stop_loss_price = long_position_size = 0
+    short_entry_price = short_stop_loss_price = short_position_size = 0
     error = None
-    stop_loss_amount = None
+    long_results_shown = short_results_shown = False
+    show_long_operation = show_short_operation = False  # 新增两个变量以控制显示
 
     if request.method == 'POST':
         try:
-            total_capital = float(request.form['total_capital'])
-            stop_loss_percentage = float(request.form['stop_loss_percentage']) / 100
+            # 获取表单数据
+            total_capital = float(request.form.get('total_capital', 0))
+            stop_loss_percentage = float(request.form.get('stop_loss_percentage', 0)) / 100  # 百分比转小数
+            # 进行计算
             stop_loss_amount = total_capital * stop_loss_percentage
 
-            if 'long' in request.form:
-                return redirect(url_for('long_position', total_capital=total_capital, stop_loss_amount=stop_loss_amount))
-            elif 'short' in request.form:
-                return redirect(url_for('short_position', total_capital=total_capital, stop_loss_amount=stop_loss_amount))
+            # 检查是否显示做多或做空的输入字段
+            if 'show_long' in request.form:
+                show_long_operation = True
+            elif 'show_short' in request.form:
+                show_short_operation = True
 
-        except ValueError:
-            error = "请输入有效的数字。"
+            # 检查是否进行做多或做空的计算
+            if 'long_calculate' in request.form:
+                long_entry_price = float(request.form.get('long_entry_price', 0))
+                long_stop_loss_price = float(request.form.get('long_stop_loss_price', 0))
+                # 做多计算
+                long_stop_loss_points = long_entry_price - long_stop_loss_price
+                if long_stop_loss_points > 0:
+                    long_position_size = (stop_loss_amount / long_stop_loss_points) * long_entry_price
+                    long_results_shown = True
+                else:
+                    error = "做多停損價格應低於進場價格。"
 
-    return render_template('index.html', stop_loss_amount=stop_loss_amount, error=error)
+            elif 'short_calculate' in request.form:
+                short_entry_price = float(request.form.get('short_entry_price', 0))
+                short_stop_loss_price = float(request.form.get('short_stop_loss_price', 0))
+                # 做空计算
+                short_stop_loss_points = short_stop_loss_price - short_entry_price
+                if short_stop_loss_points > 0:
+                    short_position_size = (stop_loss_amount / short_stop_loss_points) * short_entry_price
+                    short_results_shown = True
+                else:
+                    error = "做空停損價格應高於進場價格。"
 
-@app.route('/long_position', methods=['GET', 'POST'])
-def long_position():
-    error = None
-    long_position_size = long_stop_loss_points = None
-    total_capital = request.args.get('total_capital', type=float)
-    stop_loss_amount = request.args.get('stop_loss_amount', type=float)
+        except ValueError as e:
+            error = "請輸入有效的數字。"
 
-    if request.method == 'POST':
-        try:
-            long_entry_price = float(request.form['long_entry_price'])
-            long_stop_loss_price = float(request.form['long_stop_loss_price'])
-            long_stop_loss_points = long_entry_price - long_stop_loss_price
-            if long_stop_loss_points > 0:
-                long_position_size = (stop_loss_amount / long_stop_loss_points) * long_entry_price
-            else:
-                error = "停損價格需要小於進場價格。"
-        except ValueError:
-            error = "请输入有效的数字。"
-
-    return render_template('long_position.html',
-                           long_stop_loss_points=long_stop_loss_points,
+    # 将新增的变量传给模板
+    return render_template('index.html',
+                           total_capital=total_capital,
+                           stop_loss_percentage=stop_loss_percentage * 100,  # 显示为百分比
+                           stop_loss_amount=stop_loss_amount,
+                           long_entry_price=long_entry_price,
+                           long_stop_loss_price=long_stop_loss_price,
                            long_position_size=long_position_size,
-                           error=error)
-
-@app.route('/short_position', methods=['GET', 'POST'])
-def short_position():
-    error = None
-    short_position_size = short_stop_loss_points = None
-    total_capital = request.args.get('total_capital', type=float)
-    stop_loss_amount = request.args.get('stop_loss_amount', type=float)
-
-    if request.method == 'POST':
-        try:
-            short_entry_price = float(request.form['short_entry_price'])
-            short_stop_loss_price = float(request.form['short_stop_loss_price'])
-            short_stop_loss_points = short_stop_loss_price - short_entry_price
-            if short_stop_loss_points > 0:
-                short_position_size = (stop_loss_amount / short_stop_loss_points) * short_entry_price
-            else:
-                error = "停損價格需要大於進場價格。"
-        except ValueError:
-            error = "请输入有效的数字。"
-
-    return render_template('short_position.html',
-                           short_stop_loss_points=short_stop_loss_points,
+                           short_entry_price=short_entry_price,
+                           short_stop_loss_price=short_stop_loss_price,
                            short_position_size=short_position_size,
+                           long_results_shown=long_results_shown,
+                           short_results_shown=short_results_shown,
+                           show_long_operation=show_long_operation,
+                           show_short_operation=show_short_operation,
                            error=error)
 
 if __name__ == '__main__':
