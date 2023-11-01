@@ -9,7 +9,7 @@ et-xmlfile==1.1.0
 fonttools==4.25.0
 inflection==0.5.1
 jsonpointer==2.1
-mss==9.0.1
+mss==7.0.1
 munkres==1.1.4
 openpyxl==3.0.10
 patsy==0.5.3
