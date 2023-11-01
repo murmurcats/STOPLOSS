@@ -4,26 +4,30 @@ app = Flask(__name__)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    error = None
     stop_loss_amount = None
+
     if request.method == 'POST':
         try:
-            # 从表单获取数据
             total_capital = float(request.form['total_capital'])
-            stop_loss_percentage = float(request.form['stop_loss_percentage']) / 100  # 转换为小数
-            # 计算每笔交易的停损金额
+            stop_loss_percentage = float(request.form['stop_loss_percentage']) / 100
             stop_loss_amount = total_capital * stop_loss_percentage
-        except ValueError:
-            # 如果输入不是数字，则给出错误信息
-            stop_loss_amount = "请输入有效的数字。"
 
-    return render_template('index.html', stop_loss_amount=stop_loss_amount)
+            if 'long' in request.form:
+                return redirect(url_for('long_position', total_capital=total_capital, stop_loss_amount=stop_loss_amount))
+            elif 'short' in request.form:
+                return redirect(url_for('short_position', total_capital=total_capital, stop_loss_amount=stop_loss_amount))
+
+        except ValueError:
+            error = "请输入有效的数字。"
+
+    return render_template('index.html', stop_loss_amount=stop_loss_amount, error=error)
 
 @app.route('/long_position', methods=['GET', 'POST'])
 def long_position():
     error = None
     long_position_size = long_stop_loss_points = None
     total_capital = request.args.get('total_capital', type=float)
-    stop_loss_percentage = request.args.get('stop_loss_percentage', type=float) / 100
     stop_loss_amount = request.args.get('stop_loss_amount', type=float)
 
     if request.method == 'POST':
@@ -48,7 +52,6 @@ def short_position():
     error = None
     short_position_size = short_stop_loss_points = None
     total_capital = request.args.get('total_capital', type=float)
-    stop_loss_percentage = request.args.get('stop_loss_percentage', type=float) / 100
     stop_loss_amount = request.args.get('stop_loss_amount', type=float)
 
     if request.method == 'POST':
