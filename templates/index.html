@@ -3,27 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <title>交易倉位計算器</title>
-    <!-- 这里可以添加您的 CSS 或者引入外部样式表 -->
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .input-form {
+            margin-bottom: 20px;
+        }
+        .input-group {
+            margin-bottom: 10px;
+        }
+        .input-group label {
+            display: inline-block;
+            width: 200px;
+        }
+        .input-group input {
+            width: 200px;
+        }
+        .output {
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
     <div class="input-form">
-        <h1>輸入介面</h1>
+        <h1>输入界面</h1>
         <form method="post" action="/">
             <div class="input-group">
-                <label for="total_capital">總資金:</label>
+                <label for="total_capital">总资金:</label>
                 <input type="text" id="total_capital" name="total_capital" required>
             </div>
             <div class="input-group">
-                <label for="stop_loss_percentage">每筆交易停損比例:</label>
+                <label for="stop_loss_percentage">每笔交易止损百分比:</label>
                 <input type="text" id="stop_loss_percentage" name="stop_loss_percentage" required><span>%</span>
             </div>
-            <input type="submit" value="計算">
+            <div class="input-group">
+                <input type="submit" name="calculate" value="计算止损金额">
+            </div>
+            <div class="input-group">
+                <input type="submit" name="long" value="开多">
+                <input type="submit" name="short" value="开空">
+            </div>
         </form>
     </div>
     <div class="output">
-        <h1>計算結果</h1>
-        {% if stop_loss_amount %}
-            <p>每筆交易停損金額: {{ stop_loss_amount }}</p>
+        <h1>计算结果</h1>
+        {% if error %}
+            <p style="color: red;">{{ error }}</p>
+        {% else %}
+            {% if stop_loss_amount %}
+                <p>每笔交易止损金额: {{ stop_loss_amount | round(2) }}</p>
+            {% endif %}
         {% endif %}
     </div>
 </body>
