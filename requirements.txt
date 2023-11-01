@@ -2,7 +2,7 @@ appdirs==1.4.4
 atomicwrites==1.4.0
 brotlipy==0.7.0
 cssselect==1.1.0
-datashape==0.5.4
+datashape==0.5.2
 EasyProcess==1.1
 entrypoint2==1.1
 et-xmlfile==1.1.0
