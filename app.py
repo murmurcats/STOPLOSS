@@ -22,9 +22,13 @@ def index():
             # 进行计算
             stop_loss_amount = total_capital * stop_loss_percentage
             long_stop_loss_points = long_entry_price - long_stop_loss_price
-            long_position_size = stop_loss_amount / long_stop_loss_points if long_stop_loss_points else 0
-            short_stop_loss_points = short_entry_price - short_stop_loss_price
-            short_position_size = stop_loss_amount / short_stop_loss_points if short_stop_loss_points else 0
+            # 更新做多仓位大小的计算逻辑
+            long_position_size = (stop_loss_amount / long_stop_loss_points) * long_entry_price if long_stop_loss_points else 0
+            
+            short_stop_loss_points = short_stop_loss_price - short_entry_price
+            # 更新做空仓位大小的计算逻辑
+            short_position_size = (stop_loss_amount / short_stop_loss_points) * short_entry_price if short_stop_loss_points else 0
+            
         except ValueError as e:
             error = "请输入有效的数字。"
 
