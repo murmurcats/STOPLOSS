@@ -4,26 +4,19 @@ app = Flask(__name__)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    stop_loss_amount = None
     if request.method == 'POST':
-        # 从表单获取数据
-        total_capital = request.form['total_capital']
-        stop_loss_percentage = request.form['stop_loss_percentage']
-        stop_loss_amount = request.form['stop_loss_amount']
-        
-        # 根据用户的选择重定向到对应的页面
-        if 'long' in request.form:
-            return redirect(url_for('long_position', 
-                                    total_capital=total_capital, 
-                                    stop_loss_percentage=stop_loss_percentage, 
-                                    stop_loss_amount=stop_loss_amount))
-        elif 'short' in request.form:
-            return redirect(url_for('short_position', 
-                                    total_capital=total_capital, 
-                                    stop_loss_percentage=stop_loss_percentage, 
-                                    stop_loss_amount=stop_loss_amount))
-    
-    # GET请求时显示表单
-    return render_template('index.html')
+        try:
+            # 从表单获取数据
+            total_capital = float(request.form['total_capital'])
+            stop_loss_percentage = float(request.form['stop_loss_percentage']) / 100  # 转换为小数
+            # 计算每笔交易的停损金额
+            stop_loss_amount = total_capital * stop_loss_percentage
+        except ValueError:
+            # 如果输入不是数字，则给出错误信息
+            stop_loss_amount = "请输入有效的数字。"
+
+    return render_template('index.html', stop_loss_amount=stop_loss_amount)
 
 @app.route('/long_position', methods=['GET', 'POST'])
 def long_position():
