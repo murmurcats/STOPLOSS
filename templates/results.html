@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>計算結果</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: space-between;
+        }
+        .output-container {
+            width: 48%;
+            margin-left: 50%;
+            /* 用于调试，可以看到输出容器的位置 */
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="output-container">
+        <h1>計算結果</h1>
+        <p>停損金額: {{ stop_loss_amount }}</p>
+        <p>做多停損點數: {{ long_stop_loss_points }}</p>
+        <p>做多倉位（U本位）: {{ long_position_size }}</p>
+        <p>做空停損點數: {{ short_stop_loss_points }}</p>
+        <p>做空倉位（U本位）: {{ short_position_size }}</p>
+        <a href="/">返回計算器</a>
+    </div>
+</body>
+</html>
