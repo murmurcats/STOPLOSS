@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>做多倉位計算</title>
+    <!-- 这里可以添加您的 CSS 或者引入外部样式表 -->
+</head>
+<body>
+    <h1>做多倉位計算</h1>
+    <form method="post" action="/long_position">
+        <label for="long_entry_price">做多進場價格:</label>
+        <input type="number" id="long_entry_price" name="long_entry_price" required>
+        
+        <label for="long_stop_loss_price">做多停損價格:</label>
+        <input type="number" id="long_stop_loss_price" name="long_stop_loss_price" required>
+        
+        <input type="submit" value="計算做多倉位">
+    </form>
+
+    {% if error %}
+        <p style="color: red;">{{ error }}</p>
+    {% else %}
+        <p>做多停損點數: {{ long_stop_loss_points }}</p>
+        <p>做多倉位（U本位）: {{ long_position_size }}</p>
+    {% endif %}
+    <a href="/">返回主頁</a>
+</body>
+</html>
