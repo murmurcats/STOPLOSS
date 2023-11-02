@@ -23,7 +23,11 @@
             text-align: center;
             color: #333;
         }
-        label, input, button {
+        .label-title {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, button {
             display: block;
             width: calc(100% - 20px);
             padding: 10px;
@@ -39,6 +43,7 @@
             border: none;
             margin-top: 10px;
             cursor: pointer;
+            font-size: 14px; /* Smaller font size for buttons */
         }
         .calculate-button {
             background-color: #ffcc00; /* Yellow */
@@ -65,7 +70,7 @@
         }
         /* Responsive adjustments */
         @media (max-width: 768px) {
-            label, input, button {
+            input, button {
                 font-size: 16px;
             }
             .container {
@@ -83,11 +88,11 @@
     <div class="container">
         <h2>停損計算器</h2>
         <form method="post">
-            <label for="total_capital">總資金:</label>
-            <input type="number" id="total_capital" name="total_capital" value="{{ total_capital }}" step="any">
+            <div class="label-title">總資金:</div>
+            <input type="number" name="total_capital" value="{{ total_capital }}" step="any">
 
-            <label for="stop_loss_percentage">每筆交易停損比例 (%):</label>
-            <input type="number" id="stop_loss_percentage" name="stop_loss_percentage" value="{{ stop_loss_percentage }}" step="0.01">
+            <div class="label-title">每筆交易停損比例 (%):</div>
+            <input type="number" name="stop_loss_percentage" value="{{ stop_loss_percentage }}" step="0.01">
 
             <button type="submit" class="calculate-button">計算</button>
             
@@ -98,15 +103,15 @@
             {% endif %}
             
             <!-- 做多操作 -->
-            <div id="long_operation" style="{{ 'display:none;' if not show_long_operation }}">
-                <label for="long_entry_price">做多進場價格:</label>
-                <input type="number" id="long_entry_price" name="long_entry_price" value="{{ long_entry_price }}" step="any">
+            {% if show_long_operation %}
+                <div class="label-title">做多進場價格:</div>
+                <input type="number" name="long_entry_price" value="{{ long_entry_price }}" step="any">
 
-                <label for="long_stop_loss_price">做多停損價格:</label>
-                <input type="number" id="long_stop_loss_price" name="long_stop_loss_price" value="{{ long_stop_loss_price }}" step="any">
+                <div class="label-title">做多停損價格:</div>
+                <input type="number" name="long_stop_loss_price" value="{{ long_stop_loss_price }}" step="any">
 
                 <button type="submit" name="long_calculate" class="long-calculate-button">計算做多</button>
-            </div>
+            {% endif %}
             
             {% if long_results_shown %}
                 <div class="result">
@@ -116,15 +121,15 @@
             {% endif %}
             
             <!-- 做空操作 -->
-            <div id="short_operation" style="{{ 'display:none;' if not show_short_operation }}">
-                <label for="short_entry_price">做空進場價格:</label>
-                <input type="number" id="short_entry_price" name="short_entry_price" value="{{ short_entry_price }}" step="any">
+            {% if show_short_operation %}
+                <div class="label-title">做空進場價格:</div>
+                <input type="number" name="short_entry_price" value="{{ short_entry_price }}" step="any">
 
-                <label for="short_stop_loss_price">做空停損價格:</label>
-                <input type="number" id="short_stop_loss_price" name="short_stop_loss_price" value="{{ short_stop_loss_price }}" step="any">
+                <div class="label-title">做空停損價格:</div>
+                <input type="number" name="short_stop_loss_price" value="{{ short_stop_loss_price }}" step="any">
 
                 <button type="submit" name="short_calculate" class="short-calculate-button">計算做空</button>
-            </div>
+            {% endif %}
             
             {% if short_results_shown %}
                 <div class="result">
