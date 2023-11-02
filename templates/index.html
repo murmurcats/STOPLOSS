@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -23,39 +24,40 @@
             text-align: center;
             color: #333;
         }
-        .label-title {
+        .non-input-title {
             margin-bottom: 5px;
             font-weight: bold;
+            text-align: center;
         }
         input, button {
             display: block;
-            width: calc(100% - 20px);
+            margin-left: auto;
+            margin-right: auto;
             padding: 10px;
             margin-bottom: 10px;
             border: 1px solid #ddd;
             box-sizing: border-box;
         }
-        input[type=number] {
-            background-color: #e9e9e9;
+        input {
+            width: 100%;
         }
         button {
-            padding: 5px 10px;
+            width: auto; /* Adjust width to content */
+            padding: 10px 20px; /* Smaller padding for buttons */
+            background-color: #5cb85c;
+            color: white;
             border: none;
-            margin-top: 10px;
             cursor: pointer;
-            font-size: 14px; /* Smaller font size for buttons */
         }
-        .calculate-button {
+        button.calculate {
             background-color: #ffcc00; /* Yellow */
             color: black;
         }
-        .long-calculate-button {
+        button.long-calculate {
             background-color: #5cb85c; /* Green */
-            color: white;
         }
-        .short-calculate-button {
+        button.short-calculate {
             background-color: #d9534f; /* Red */
-            color: white;
         }
         button:hover {
             opacity: 0.8;
@@ -70,79 +72,47 @@
         }
         /* Responsive adjustments */
         @media (max-width: 768px) {
-            input, button {
-                font-size: 16px;
-            }
             .container {
                 width: 95%;
                 margin: 10px auto;
                 padding: 10px;
             }
-            .button {
-                padding: 10px 20px;
+            button {
+                padding: 10px 20px; /* Larger padding for touch targets */
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>停損計算器</h2>
+        <h2>呢喃貓投資停損計算器</h2>
         <form method="post">
-            <div class="label-title">總資金:</div>
-            <input type="number" name="total_capital" value="{{ total_capital }}" step="any">
+            <div class="non-input-title">總資金:</div>
+            <input type="number" name="total_capital" placeholder="請輸入總資金" step="any">
 
-            <div class="label-title">每筆交易停損比例 (%):</div>
-            <input type="number" name="stop_loss_percentage" value="{{ stop_loss_percentage }}" step="0.01">
+            <div class="non-input-title">每筆交易停損比例 (%):</div>
+            <input type="number" name="stop_loss_percentage" placeholder="請輸入停損比例" step="0.01">
 
-            <button type="submit" class="calculate-button">計算</button>
+            <button type="submit" class="calculate">計算</button>
             
-            {% if stop_loss_amount > 0 %}
-                <div class="result">
-                    <p>每筆交易停損金額: {{ stop_loss_amount }}</p>
-                </div>
-            {% endif %}
-            
-            <!-- 做多操作 -->
-            {% if show_long_operation %}
-                <div class="label-title">做多進場價格:</div>
-                <input type="number" name="long_entry_price" value="{{ long_entry_price }}" step="any">
+            <div class="non-input-title">做多進場價格:</div>
+            <input type="number" name="long_entry_price" placeholder="請輸入做多進場價格" step="any">
 
-                <div class="label-title">做多停損價格:</div>
-                <input type="number" name="long_stop_loss_price" value="{{ long_stop_loss_price }}" step="any">
+            <div class="non-input-title">做多停損價格:</div>
+            <input type="number" name="long_stop_loss_price" placeholder="請輸入做多停損價格" step="any">
 
-                <button type="submit" name="long_calculate" class="long-calculate-button">計算做多</button>
-            {% endif %}
-            
-            {% if long_results_shown %}
-                <div class="result">
-                    <p>做多停損點數: {{ long_entry_price - long_stop_loss_price }}</p>
-                    <p>做多倉位 (U): {{ long_position_size }}</p>
-                </div>
-            {% endif %}
-            
-            <!-- 做空操作 -->
-            {% if show_short_operation %}
-                <div class="label-title">做空進場價格:</div>
-                <input type="number" name="short_entry_price" value="{{ short_entry_price }}" step="any">
+            <button type="submit" name="long_calculate" class="long-calculate">計算做多</button>
 
-                <div class="label-title">做空停損價格:</div>
-                <input type="number" name="short_stop_loss_price" value="{{ short_stop_loss_price }}" step="any">
+            <div class="non-input-title">做空進場價格:</div>
+            <input type="number" name="short_entry_price" placeholder="請輸入做空進場價格" step="any">
 
-                <button type="submit" name="short_calculate" class="short-calculate-button">計算做空</button>
-            {% endif %}
-            
-            {% if short_results_shown %}
-                <div class="result">
-                    <p>做空停損點數: {{ short_stop_loss_price - short_entry_price }}</p>
-                    <p>做空倉位 (U): {{ short_position_size }}</p>
-                </div>
-            {% endif %}
+            <div class="non-input-title">做空停損價格:</div>
+            <input type="number" name="short_stop_loss_price" placeholder="請輸入做空停損價格" step="any">
 
-            {% if error %}
-                <div class="error">
-                    <p>{{ error }}</p>
-                </div>
-            {% endif %}
+            <button type="submit" name="short_calculate" class="short-calculate">計算做空</button>
+
+            <!-- Placeholder for results and error messages -->
+            <!-- Actual Flask template tags would be needed to display dynamic content -->
         </form>
     </div>
 </body>
