@@ -5,7 +5,61 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>停損計算器</title>
     <style>
-        /* 样式内容不变 */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 90%;
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        label, input, button {
+            display: block;
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #5cb85c;
+            color: white;
+            border: none;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #4cae4c;
+        }
+        .result {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .error {
+            color: red;
+            text-align: center;
+        }
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            label, input, button {
+                font-size: 16px;
+            }
+            .container {
+                width: 95%;
+                margin: 10px auto;
+                padding: 10px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -27,7 +81,7 @@
             {% endif %}
             
             <!-- 做多操作 -->
-            <div id="long_operation" class="{{ 'hidden' if not long_results_shown }}">
+            <div id="long_operation" class="{{ 'hidden' if not show_long_operation }}">
                 <label for="long_entry_price">做多進場價格:</label>
                 <input type="number" id="long_entry_price" name="long_entry_price" value="{{ long_entry_price }}" step="any">
 
@@ -45,7 +99,7 @@
             {% endif %}
             
             <!-- 做空操作 -->
-            <div id="short_operation" class="{{ 'hidden' if not short_results_shown }}">
+            <div id="short_operation" class="{{ 'hidden' if not show_short_operation }}">
                 <label for="short_entry_price">做空進場價格:</label>
                 <input type="number" id="short_entry_price" name="short_entry_price" value="{{ short_entry_price }}" step="any">
 
